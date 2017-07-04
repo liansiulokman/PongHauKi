@@ -1,0 +1,715 @@
+<!-- Browser: Google Chrome is preferred -->
+<!DOCTYPE HTML>
+<html>
+<title>Pong Hau Ki</title>
+<head>
+    <style>
+        .BigFont {
+            font-size: 18px;
+        }
+        
+        #linePos {
+            position: absolute;
+        }
+        
+        #droppable1 {
+            position: absolute;
+            left: 10px;
+            top: 30px;
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            margin: 10px;
+        }
+        
+        #droppable2 {
+            position: absolute;
+            left: 400px;
+            top: 30px;
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            margin: 10px;
+        }
+        
+        #droppable3 {
+            position: absolute;
+            left: 200px;
+            top: 200px;
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            margin: 10px;
+        }
+        
+        #droppable4 {
+            position: absolute;
+            left: 10px;
+            top: 380px;
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            margin: 10px;
+        }
+        
+        #droppable5 {
+            position: absolute;
+            left: 400px;
+            top: 380px;
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            margin: 10px;
+        }
+        
+        #draggable1 {
+            background: red;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            position: absolute;
+            margin: 0px;
+            border: 0px;
+        }
+        
+        #draggable2 {
+            background: red;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            position: absolute;
+            margin: 0px;
+            border: 0px;
+        }
+        
+        #draggable3 {
+            background: blue;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            position: absolute;
+            margin: 0px;
+            border: 0px;
+        }
+        
+        #draggable4 {
+            background: blue;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            padding: 0.5em;
+            float: left;
+            position: absolute;
+            margin: 0px;
+            border: 0px;
+        }
+        
+        br {
+            clear: both;
+        }
+    </style>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+
+    <script src="https://rawgit.com/jquery/jquery-ui/1-11-stable/external/jquery-simulate/jquery.simulate.js"></script>
+    <script>
+        var slot;
+        var a1Pos;
+        var a2Pos;
+        var b1Pos;
+        var b2Pos;
+        var dropDest;
+        var dragObj;
+        var game = false;
+        var player = "Player A";
+        var getPos = false;
+        var comp = false;
+        
+        function checkTurn() {
+            if ($("#heading").html() == "Player A's turn to move.") {
+                $("#draggable1").draggable("enable");
+                $("#draggable2").draggable("enable");
+                $("#draggable3").draggable("disable");
+                $("#draggable4").draggable("disable");
+                lockAChess();
+            } 
+            else if($("#heading").html() == "Player B's turn to move.") {
+                $("#draggable1").draggable("disable");
+                $("#draggable2").draggable("disable");
+                $("#draggable3").draggable("enable");
+                $("#draggable4").draggable("enable");
+                lockBChess();
+            }
+            
+            if(player=="Player A"){
+                $("#draggable3").draggable("disable");
+                $("#draggable4").draggable("disable");
+            }
+            else{
+                $("#draggable1").draggable("disable");
+                $("#draggable2").draggable("disable");
+            }
+        }
+        
+        function lockAChess(){
+            switch(slot){
+                case "#droppable5":
+                    if(a1Pos=="#droppable1"||a1Pos=="#droppable2"){
+                        $("#draggable1").draggable("disable");
+                    }
+                    else if(a2Pos=="#droppable1"||a2Pos=="#droppable2"){
+                        $("#draggable2").draggable("disable");
+                    }
+                    break;
+                case "#droppable4":
+                    if(a1Pos=="#droppable2"){
+                        $("#draggable1").draggable("disable");
+                    }
+                    else if(a2Pos=="#droppable2"){
+                        $("#draggable2").draggable("disable");
+                    }
+                    break;
+                case "#droppable2":
+                    if(a1Pos=="#droppable4"||a1Pos=="#droppable5"){
+                        $("#draggable1").draggable("disable");
+                    }
+                    else if(a2Pos=="#droppable4"||a2Pos=="#droppable5"){
+                        $("#draggable2").draggable("disable");
+                    }
+                    break;
+                case "#droppable1":
+                    if(a1Pos=="#droppable5"){
+                        $("#draggable1").draggable("disable");
+                    }
+                    else if(a2Pos=="#droppable5"){
+                        $("#draggable2").draggable("disable");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        function lockBChess(){
+            switch(slot){
+                case "#droppable5":
+                    if(b1Pos=="#droppable1"||b1Pos=="#droppable2"){
+                        $("#draggable3").draggable("disable");
+                    }
+                    else if(b2Pos=="#droppable1"||b2Pos=="#droppable2"){
+                        $("#draggable4").draggable("disable");
+                    }
+                    break;
+                case "#droppable4":
+                    if(b1Pos=="#droppable2"){
+                        $("#draggable3").draggable("disable");
+                    }
+                    else if(b2Pos=="#droppable2"){
+                        $("#draggable4").draggable("disable");
+                    }
+                    break;
+                case "#droppable2":
+                    if(b1Pos=="#droppable4"||b1Pos=="#droppable5"){
+                        $("#draggable3").draggable("disable");
+                    }
+                    else if(b2Pos=="#droppable4"||b2Pos=="#droppable5"){
+                        $("#draggable4").draggable("disable");
+                    }
+                    break;
+                case "#droppable1":
+                    if(b1Pos=="#droppable5"){
+                        $("#draggable3").draggable("disable");
+                    }
+                    else if(b2Pos=="#droppable5"){
+                        $("#draggable4").draggable("disable");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        function checkEndGame(){
+            if(((a1Pos=="#droppable1" || a1Pos=="#droppable2") && (a2Pos=="#droppable1" || a2Pos=="#droppable2") && (slot=="#droppable5")) || ((a1Pos=="#droppable4" || a1Pos=="#droppable5") && (a2Pos=="#droppable4" || a2Pos=="#droppable5") && (slot=="#droppable2"))){
+                game = false;
+                if(player=="Player B"){
+                    alert("You win !!");
+                }
+                else{
+                    alert("You Lose!!");
+                }
+                document.location.reload();
+            }
+            else if(((b1Pos=="#droppable1" || b1Pos=="#droppable2") && (b2Pos=="#droppable1" || b2Pos=="#droppable2") && (slot=="#droppable5")) || ((b1Pos=="#droppable4" || b1Pos=="#droppable5") && (b2Pos=="#droppable4" || b2Pos=="#droppable5") && (slot=="#droppable2"))){
+                game = false;
+                if(player=="Player A"){
+                    alert("You win !!");
+                }
+                else{
+                    alert("You Lose!!");
+                }
+                document.location.reload();
+            }
+        }
+        
+        
+        function moveChess(_draggable, _droppable) {
+            var draggableOffset = _draggable.offset(),
+                droppableOffset = _droppable.offset(),
+                dx = droppableOffset.left - draggableOffset.left,
+                dy = droppableOffset.top - draggableOffset.top;
+                
+            _draggable.simulate("drag", {
+                dx: dx,
+                dy: dy
+            });
+        }
+        
+        function validateMove(dragObject, dropPiece){
+            var dragPiece = "";
+            switch(dragObject){
+                case "#draggable1":
+                    dragPiece = a1Pos;
+                    break;
+                case "#draggable2":
+                    dragPiece = a2Pos;
+                    break;
+                case "#draggable3":
+                    dragPiece = b1Pos;
+                    break;
+                case "#draggable4":
+                    dragPiece = b2Pos;
+                    break;
+                default:
+                    break;
+            }
+            if((dragPiece=="#droppable1" && dropPiece=="#droppable5")||(dragPiece=="#droppable2" && dropPiece=="#droppable4")||(dragPiece=="#droppable2" && dropPiece=="#droppable5")||(dragPiece=="#droppable4" && dropPiece=="#droppable2")||(dragPiece=="#droppable5" && dropPiece=="#droppable1")||(dragPiece=="#droppable5" && dropPiece=="#droppable2")){
+                alert("Invalid move!");
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        
+        $(document).ready(function() {
+            $("#board").hide();
+            $("#droppable1").hide();
+            $("#droppable2").hide();
+            $("#droppable3").hide();
+            $("#droppable4").hide();
+            $("#droppable5").hide();
+            $("#draggable1").hide();
+            $("#draggable2").hide();
+            $("#draggable3").hide();
+            $("#draggable4").hide();
+            $(".draggable").draggable({
+                start: function(ev, ui) {
+                    $("#dt1").html("Drag Object: " + ev.target.id);
+                    dragObj = "#" + ev.target.id;
+                },
+                
+                stop: function(ev, ui) {
+                    //dragObj = "#" + ev.target.id;
+                }
+            });
+                
+            $(".droppable").droppable({
+                over: function(ev, ui) {
+                    $("#dt2").html("Drop Destination: " + ev.target.id)
+                },
+                drop: function(ev, ui) {
+                    //if(validateMove(dragObj,("#"+ev.target.id))){
+                        dropDest = "#" + ev.target.id;
+                        var dropped = ui.draggable;
+                        var droppedOn = $(this);
+                        $(dropped).detach().css({top: 0, left: 0}).appendTo(droppedOn);
+                        switch(dragObj){
+                            case "#draggable1":
+                                if(!comp){
+                                    slot = a1Pos;
+                                    a1Pos = dropDest;
+                                    enableSlot();
+                                    writeChessPos();
+                                    checkEndGame();
+                                }
+                                if(game){
+                                    $("#heading").html("Player B's turn to move.");
+                                    checkTurn();
+                                    if(player=="Player A"){
+                                        getPos = false;
+                                        setTimeout(waitForResponse, 2000);
+                                    }
+                                }
+                                break;
+                            case "#draggable2":
+                                if(!comp){
+                                    slot = a2Pos;
+                                    a2Pos = dropDest;
+                                    enableSlot();
+                                    writeChessPos();
+                                    checkEndGame();
+                                }
+                                if(game){
+                                    $("#heading").html("Player B's turn to move.");
+                                    checkTurn();
+                                    if(player=="Player A"){
+                                        getPos = false;
+                                        setTimeout(waitForResponse, 2000);
+                                    }
+                                }
+                                break;
+                            case "#draggable3":
+                                if(!comp){
+                                    slot = b1Pos;
+                                    b1Pos = dropDest;
+                                    enableSlot();
+                                    writeChessPos();
+                                    checkEndGame();
+                                }
+                                if(game){
+                                    $("#heading").html("Player A's turn to move.");
+                                    checkTurn();
+                                    if(player=="Player B"){
+                                        getPos = false;
+                                        setTimeout(waitForResponse, 2000);
+                                    }
+                                }
+                                break;
+                            case "#draggable4":
+                                if(!comp){
+                                    slot = b2Pos;
+                                    b2Pos = dropDest;
+                                    enableSlot();
+                                    writeChessPos();
+                                    checkEndGame();
+                                }
+                                if(game){
+                                    $("#heading").html("Player A's turn to move.");
+                                    checkTurn();
+                                    if(player=="Player B"){
+                                        getPos = false;
+                                        setTimeout(waitForResponse, 2000);
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    //}
+                    //else{
+                    //    moveChess(dragObj,findDrop(dragObj));
+                    //}
+                }
+            });
+        })
+        
+        function enableSlot(){
+            $("#droppable1").droppable("disable");
+            $("#droppable2").droppable("disable");
+            $("#droppable3").droppable("disable");
+            $("#droppable4").droppable("disable");
+            $("#droppable5").droppable("disable");
+            $(slot).droppable("enable");
+        }
+        
+        function initialize() {
+            $("#readme").hide();
+            if(document.getElementById("playerB").checked){
+              player = "Player B";
+            }
+            document.getElementById("role").style = "visibility: visible";
+            $("#role").html("You are " + player + ".");
+            if (document.getElementById("start").innerHTML == "START") {
+                $("#board").show();
+                $("#droppable1").show();
+                $("#droppable2").show();
+                $("#droppable3").show();
+                $("#droppable4").show();
+                $("#droppable5").show();
+                $("#draggable1").show();
+                $("#draggable2").show();
+                $("#draggable3").show();
+                $("#draggable4").show();
+                
+                moveChess($("#draggable1"),$("#droppable1"));
+                a1Pos = "#droppable1";
+                moveChess($("#draggable2"),$("#droppable4"));
+                a2Pos = "#droppable4";
+                moveChess($("#draggable3"),$("#droppable2"));
+                b1Pos = "#droppable2";
+                moveChess($("#draggable4"),$("#droppable5"));
+                b2Pos = "#droppable5";
+                
+                slot = "#droppable3";
+                
+                writeChessPos();
+                
+                $("#start").html("STOP");
+                $("#heading").html("Player A's turn to move.");
+                
+                
+                
+                game = true;
+                enableSlot();
+                if(player=="Player A"){
+                    $("#draggable3").draggable("disable");
+                    $("#draggable4").draggable("disable");
+                }
+                else{
+                    $("#draggable1").draggable("disable");
+                    $("#draggable2").draggable("disable");
+                    $("#draggable3").draggable("disable");
+                    $("#draggable4").draggable("disable");
+                    setTimeout(waitForResponse, 2000);
+                }
+            } 
+            else {
+                document.location.reload();
+            }
+        }
+        
+        function readChessPos(){
+            
+            $.ajax({
+                //type:    "GET",
+                //url:     "https://webappa2.000webhostapp.com/chessPos.txt",
+                url: "readChessPos.php" ,
+                success: function(text) {
+                    $("#hiddenText").html(text.substr(1, text.length-2));
+                },
+                //error:   function() {
+                //    readChessPos();
+                //}
+            });
+            /*
+            function xhr(){
+                  var xmlHttp;
+                  try{
+                    xmlHttp=new XMLHttpRequest(); 
+                  } catch(e) {
+                    try {
+                      xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); 
+                    } catch(e) {
+                      try {
+                        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); 
+                      } catch(e) {
+                        alert("Your browser does not support AJAX!"); 
+                        return false;
+                      }
+                    }
+                  }
+                  return xmlHttp; 
+            }
+            req = xhr();
+            req.open("GET", "chessPos.txt");
+            req.onreadystatechange = function() {
+                $("#hiddenText").html(req.responseText);
+            };
+            req.send(null);
+            */
+        }
+        
+        function waitForResponse(){
+            //alert("waiting...");
+            
+            //var x = 0;
+            readChessPos();
+            var chessString = document.getElementById("hiddenText").innerHTML;
+            //alert(chessString);
+            /*
+             $.getJSON('readChessPos.php', function(data) {
+                $(data).each(function(key, value) {
+                    chessPos[x++] = data;
+                });
+            });
+            */
+            var newA1, newA2, newB1, newB2, newSlot;
+            var chessPos = chessString.split(",");
+            newA1 = (String(chessPos[0])=="undefined") ? a1Pos:String(chessPos[0]);
+            newA2 = (String(chessPos[1])=="undefined") ? a2Pos:String(chessPos[1]);
+            newB1 = (String(chessPos[2])=="undefined") ? b1Pos:String(chessPos[2]);
+            newB2 = (String(chessPos[3])=="undefined") ? b2Pos:String(chessPos[3]);
+            newSlot = (String(chessPos[4])=="undefined") ? slot:String(chessPos[4]);
+            
+            //alert(newA1 + newA2 + newB1 + newB2 + newSlot);
+            if(chessString=="als"){
+                waitForResponse();
+            }
+            else{
+                if(newA1==a1Pos && newA2==a2Pos && newB1==b1Pos && newB2==b2Pos && newSlot==slot){
+                    setTimeout(waitForResponse, 2000);
+                }
+                else{
+                    getPos = true;
+                    a1Pos = newA1;
+                    a2Pos = newA2;
+                    b1Pos = newB1;
+                    b2Pos = newB2;
+                    slot = newSlot;
+                    comp = true;
+                    game = false;
+                    $("#draggable1").draggable("enable");
+                    $("#draggable2").draggable("enable");
+                    $("#draggable3").draggable("enable");
+                    $("#draggable4").draggable("enable");
+                    $("#droppable1").droppable("enable");
+                    $("#droppable2").droppable("enable");
+                    $("#droppable3").droppable("enable");
+                    $("#droppable4").droppable("enable");
+                    $("#droppable5").droppable("enable");
+                    moveChess($("#draggable1"),$(a1Pos));
+                    moveChess($("#draggable2"),$(a2Pos));
+                    moveChess($("#draggable3"),$(b1Pos));
+                    moveChess($("#draggable4"),$(b2Pos));
+                    comp = false;
+                    game = true;
+                    if(player=="Player A"){
+                        $("#heading").html("Player A's turn to move.");
+                    }
+                    else{
+                        $("#heading").html("Player B's turn to move.");
+                    }
+                    /*
+                    if($("#heading").html()=="Player A's turn to move."){
+                        $("#heading").html("Player B's turn to move.");
+                    }
+                    else{
+                        $("#heading").html("Player A's turn to move.");
+                    }
+                    */
+                    checkTurn();
+                    enableSlot();
+                    display();
+                    checkEndGame();
+                }
+            }
+            
+        }
+        
+        function writeChessPos(){
+            var chessPosString = a1Pos + "," + a2Pos + "," + b1Pos + "," + b2Pos + "," + slot;
+            $.post("writeChessPos.php", {variable: chessPosString});
+            getPos=false;
+            $("#hiddenText").html(chessPosString);
+            display();
+            /*
+            if(player=="Player A"){
+                getPos = true;
+            }
+            else{//player B
+                waitForResponse();
+            }
+            */
+        }
+        
+        function display(){
+            $("#pos1").html(a1Pos);
+            $("#pos2").html(a2Pos);
+            $("#pos3").html(b1Pos);
+            $("#pos4").html(b2Pos);
+            $("#pos5").html(slot);
+        }
+        
+    </script>
+    
+    <p id="heading" style="font-size:16px"></p>
+    
+    
+    <div id="readme" style="width:700px;">
+            <h2>Pong Hau Ki</h2>
+            <div>
+                <br>
+                <h3>Attention!!</h3>
+                <p>Due to the server stability problem, the game board of the two players may not be updated concurrently all the time. Please watch the two demo videos about the game.</p> 
+                <a href="https://sendvid.com/3t18qyfv" target="_blank">Demo 1 </a>
+                <br> 
+                <a href="http://sendvid.com/4l92aqz8" target="_blank"> Demo 2</a>
+                <p>It is a two-player game. You can choose to be player A or B and your friend will choose the other one. Press start to begin the game. For a single player game, please visit <a href="http://a2.liansiulokman.dx.am/ChessSingle.html">here</a>.</p>
+
+                <h3>README</h3>
+                <p class="BigFont">Pong Hau Ki is a Chinese tradition board game for two players. The appearance of the board is like that of a spring in the center, with water running out in all directions. The board consists of 5 vertices and 7 edges.</p>
+                <img src="demo.png"/>
+                <br>
+                <h3>Game Rules</h3>
+                <ul class="BigFont" style="list-style-type:disc">
+                  <li>To begin the game, press the "START" button below</li>
+                  <li>Each player has two pieces</li>
+                  <li>You are Player A or B in this game</li>
+                  <li>Players take turns to move</li>
+                  <li>At each turn, the player moves one of his two pieces into the adjacent vacant vertex</li>
+                  <li>If a player can't move, he loses</li>
+                </ul>
+            </div>
+            <br>
+            <h3>Player</h3> 
+            <input id="playerA" type="radio" name="player" value="A" checked/> A
+            <input id="playerB" type="radio" name="player" value="B" /> B<br>
+        <br>
+        <br>
+    </div>
+    
+    <svg id="board" width="2000" height="450" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <line id="linePos" x1="93" y1="40" x2="413" y2="40" stroke="gray" stroke-width="2" />
+        <line id="linePos" x1="93" y1="40" x2="224" y2="184" stroke="gray" stroke-width="2" />
+        <line id="linePos" x1="280" y1="240" x2="413" y2="390" stroke="gray" stroke-width="2" />
+        <line id="linePos" x1="54" y1="81" x2="54" y2="350" stroke="gray" stroke-width="2" />
+        <line id="linePos" x1="93" y1="390" x2="413" y2="390" stroke="gray" stroke-width="2" />
+        <line id="linePos" x1="413" y1="40" x2="282" y2="184" stroke="gray" stroke-width="2" />
+        <line id="linePos" x1="224" y1="239" x2="93" y2="390" stroke="gray" stroke-width="2" />
+
+        <div id="droppable1" class="ui-widget-header droppable">
+        </div>
+        <div id="droppable2" class="ui-widget-header droppable">
+        </div>
+        <div id="droppable3" class="ui-widget-header droppable">
+        </div>
+        <div id="droppable4" class="ui-widget-header droppable">
+        </div>
+        <div id="droppable5" class="ui-widget-header droppable">
+        </div>
+    </svg>
+        <img id="draggable1" class="ui-widget-content draggable" src="chessA.png" width="80" height="80" />
+        <img id="draggable2" class="ui-widget-content draggable" src="chessA.png" width="80" height="80" />
+        <img id="draggable3" class="ui-widget-content draggable" src="chessB.png" width="80" height="80" />
+        <img id="draggable4" class="ui-widget-content draggable" src="chessB.png" width="80" height="80" />
+    
+    
+    <button id="start" onclick="initialize()" style="height:20px;width:60px;">START</button>
+    
+    <p id="role" style="visibility: hidden;font-size:16px"></p>
+    <p id="hiddenText" style="visibility: hidden;"></p>
+    <p id="pos1" style="visibility: hidden;"></p>
+    <p id="pos2" style="visibility: hidden;"></p>
+    <p id="pos3" style="visibility: hidden;"></p>
+    <p id="pos4" style="visibility: hidden;"></p>
+    <p id="pos5" style="visibility: hidden;"></p>
+    <p id="dt1" style="visibility: hidden;"></p>
+    <p id="dt2" style="visibility: hidden;"></p>
+</head>
+
+</html>
